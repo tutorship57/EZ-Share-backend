@@ -23,6 +23,7 @@ const createMenuShare = async (req,res)=>{
     }
 }
 
+
 const getMenuShareInfo = async (req,res)=>{
     const { mealId } = req.params
     try {
@@ -90,9 +91,71 @@ const getMenuShareInfo = async (req,res)=>{
     }
 }
 
+const getParticipantSummary = async (req,res)=>{
+    const { mealId } = req.params
+    try {
+        
+        const participantSummary = await prisma.menuShare.findMany({
+            select:{
+                guest_id:true,
+                guest_table:{
+                    select:{
+                        guest_name:true
+                    }
+                },
+                menu_id:true,
+                menu_table:{
+                    select:{
+                        menu_name:true
+                    }
+                },
+                amount:true,
+                meal_id:true
+            },
+            where:{
+                meal_id:mealId
+            },
+            
+        })
+        console.log ("Participant Summary",participantSummary)
+        const ProcessParticipantSummary = participantSummary.reduce((acc,item)=>{
+            let participant = acc.find(p=>p.guest.guest_id === item.guest_id);
+            console.log(participant)
+            let menu = participant?.menuItems.some(mi=>mi.menu_id === item.menu_id);
+            if(!participant){
+                participant = {
+                    guest: {
+                        guest_id : item.guest_id,
+                        name : item.guest_table.guest_name
+                    },
+                    menuItems : [],
+                    total:0
+                }
+                acc.push(participant);
+            }
+            if(!menu){
+                participant.menuItems.push({
+                    menu_id:item.menu_id,
+                    menu_name:item.menu_table.menu_name,
+                    amount:item.amount
+                })
+            }
+            participant.total += item.amount;
+            return acc;
+        },[])
+        res.status(200).json({participantSummarySplit:ProcessParticipantSummary})
+    }catch(err){
+        console.error("Error fetching participant summary:", err)
+        res.status(500).json({ error: "Failed to fetch participant summary" })
+    }
+
+    
+
+}
 
 
 module.exports = {
     createMenuShare,
-    getMenuShareInfo
+    getMenuShareInfo,
+    getParticipantSummary
 }
