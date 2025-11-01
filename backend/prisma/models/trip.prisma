@@ -1,0 +1,11 @@
+model Trip{
+    trip_id   String      @id @default(uuid())
+    tripName  String
+    createdAt DateTime @default(now())
+    Description String
+    Date DateTime @db.Date
+    user_id  String
+    createBy User @relation(fields: [user_id],references: [user_id])
+    meals    Meal[]
+    tripGuests  TripGuest[]
+}

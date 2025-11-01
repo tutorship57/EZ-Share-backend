@@ -1,0 +1,12 @@
+model User {
+  user_id        String      @id @default(uuid())
+  email     String   @unique
+  username  String?
+  password  String   
+  verify_status    Boolean
+  token     String 
+  token_expired DateTime 
+  createdAt DateTime @default(now())
+  trips          Trip[]
+  guests         Guest[]
+}

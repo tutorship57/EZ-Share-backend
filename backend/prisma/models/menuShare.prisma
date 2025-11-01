@@ -1,0 +1,11 @@
+model MenuShare{
+    menu_id String
+    guest_id String
+    amount Int
+    status String
+    meal_id String
+    meal_table Meal @relation(fields: [meal_id],references: [meal_id])
+    @@id([menu_id,guest_id])
+    menu_table Menu @relation(fields: [menu_id],references: [menu_id])
+    guest_table Guest @relation(fields: [guest_id],references: [guest_id])
+}
