@@ -2,7 +2,8 @@ const { PrismaClient } = require('../generated/prisma')
 const prisma = new PrismaClient();
 const crypto = require('crypto');
 const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const { use } = require('../routes/menuShare.Route');
 
 const login = async (req, res)=>{
     const {email,password} = req.body ; 
@@ -34,16 +35,8 @@ const login = async (req, res)=>{
         // });
         res.cookie("refreshToken", refreshToken, {
           httpOnly: true,
-
-        });
-        res.cookie("refreshToken2", refreshToken, {
-          httpOnly: true,
-          secure: false,       // dev เท่านั้น
-          sameSite: "None",    // cross-site
-          maxAge: 24 * 60 * 60 * 1000
-        });
         
-        
+        });
        
         // res.cookie('username', 'JohnDoe', {
         //   maxAge: 1000 * 60 * 60 * 24 * 7, // Cookie expires in 7 days (milliseconds)
@@ -138,9 +131,33 @@ const tokenRecover = async(req,res)=>{
   });
 }
 
+const logout = async (req,res)=>{
+    const refreshToken = req.cookies?.refreshToken;
+
+    if(!refreshToken){
+        return res.status(400).json({
+            message: 'something went wrong'
+        })
+    }
+
+    jwt.verify(refreshToken,process.env.JWT_REFRESH_SECRET,(err,user)=>{
+        if(err){
+            return res.status(403).json({
+                message: 'something went wrong'
+            })
+        }
+    })
+
+    res.clearCookie('refreshToken')
+    return res.status(200).json({
+        message: 'logout successfully'
+    })
+}
+
 
 module.exports = {
     login,
     register,
+    logout,
     tokenRecover
 }
