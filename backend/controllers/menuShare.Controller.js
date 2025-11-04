@@ -1,9 +1,9 @@
-const { get } = require('http')
 const {PrismaClient} = require('../generated/prisma')
 const prisma = new PrismaClient()
 
 const createMenuShare = async (req,res)=>{
     const { menuId,guestIds,amount,mealId} = req.body
+
     const amountPerEachPeople = amount / guestIds.length
     const prepareData = guestIds.map(guestId => ({
         menu_id: menuId,
@@ -12,6 +12,7 @@ const createMenuShare = async (req,res)=>{
         status: "pending",
         meal_id: mealId
     }))
+
     try {
         const newMenuShare = await prisma.menuShare.createMany({
             data: prepareData
@@ -23,6 +24,39 @@ const createMenuShare = async (req,res)=>{
     }
 }
 
+const editMenuShare = async (req,res)=>{
+    const { menuId, guestIds,amount,mealId} = req.body
+    
+    const deleteExistingMenuShare = await prisma.menuShare.deleteMany({
+        where:{
+            menu_id:menuId,
+            meal_id:mealId
+        }
+    })
+    if(!deleteExistingMenuShare){
+        return res.status(400).json({ error: "Menu does not Exists !" })
+    }
+
+    const amountPerEachPeople = amount / guestIds.length
+    const prepareData = guestIds.map(guestId => ({
+        menu_id: menuId,
+        guest_id: guestId,
+        amount: amountPerEachPeople,
+        status: "pending",
+        meal_id: mealId
+    }))
+
+    try {
+        const newMenuShare = await prisma.menuShare.createMany({
+            data: prepareData
+        })
+        res.status(201).json(newMenuShare)
+    } catch (error) {
+        console.error("Error creating menu share:", error)
+        res.status(500).json({ error: "Failed to create menu share" })
+    }
+    return res.status(200).json({MenuShareExists})
+}
 
 const getMenuShareInfo = async (req,res)=>{
     const { mealId } = req.params
@@ -78,12 +112,9 @@ const getMenuShareInfo = async (req,res)=>{
             );
             return acc;
         },[]);
-        
+
+
         console.log("MenuInfoFinalResult Cleaning",JSON.stringify(processedMenuShareInfo, null, 2))
-
-
-
-
         res.status(200).json({menuShareInfo:processedMenuShareInfo})
     } catch (err){
         console.error("Error fetching menu share info:", err)
@@ -157,5 +188,6 @@ const getParticipantSummary = async (req,res)=>{
 module.exports = {
     createMenuShare,
     getMenuShareInfo,
-    getParticipantSummary
+    getParticipantSummary,
+    editMenuShare
 }
