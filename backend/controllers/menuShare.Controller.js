@@ -122,6 +122,21 @@ const getMenuShareInfo = async (req,res)=>{
     }
 }
 
+const deleteMenuShare = async (req,res)=>{
+    const { menuId } = req.params
+    try{
+        const deleteMenuShare = await prisma.menuShare.deleteMany({
+            where:{
+                menu_id:menuId
+            }
+        })
+        res.status(200).json(deleteMenuShare)
+    }catch(err){
+        console.error("Error deleting menu share:", err)
+        res.status(500).json({ error: "Failed to delete menu share" })
+    }
+}
+
 const getParticipantSummary = async (req,res)=>{
     const { mealId } = req.params
     try {
@@ -184,10 +199,28 @@ const getParticipantSummary = async (req,res)=>{
 
 }
 
+const shareCount = async (req,res)=>{
+    const { mealId } = req.params
+    try {
+        const shareCount = await prisma.menuShare.groupBy({
+            by:['meal_id'],
+            where:{meal_id:mealId},
+            _count:{
+                guest_id:true
+            }
+        })
+        res.status(200).json({shareCount})
+    } catch (error) {
+        console.error("Error fetching share count:", error)
+        res.status(500).json({ error: "Failed to fetch share count" })
+    }
+}
+
 
 module.exports = {
     createMenuShare,
     getMenuShareInfo,
     getParticipantSummary,
-    editMenuShare
+    editMenuShare,
+    deleteMenuShare
 }

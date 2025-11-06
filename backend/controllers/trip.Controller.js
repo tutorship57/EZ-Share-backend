@@ -30,37 +30,12 @@ const getTripByUserID = async(req,res) =>{
     const userID = req.user.id
     try {
         const trips = await prisma.trip.findMany({
-            where:{user_id:userID}
+            where:{user_id:userID},
+            include:{
+                _count:true
+            },
         })
-        // const tripsWithCounts = await Promise.all(
-        //     trips.map(async (element) => {
-        //       const guestCount = await prisma.tripGuest.count({
-        //         where: { trip_id: element.trip_id }
-        //       });
-        //       const menuCount = await prisma.menu.count({
-        //         where: { trip_id: element.trip_id }
-        //       });
-      
-        //       return {
-        //         ...element,
-        //         memberCount: guestCount,
-        //         menuCount: menuCount
-        //       };
-        //     })
-        //   );
-      
-        // trips.map(async (element)=>{
-        //     const guestCount = await prisma.tripGuest.count({
-        //         where:{trip_id:element.trip_id}
-        //     })
-        //     // const menuCount = await prisma.menu.count({
-        //     //     where:{trip_id:element.trip_id}
-        //     // })
-        //     // element.memberCount = guestCount
-        //     // element.menuCount = menuCount
-        // })
-        
-        
+               
         return res.status(200).json({trips})
     } catch (error) {
         console.log(error);

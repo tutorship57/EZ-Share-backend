@@ -20,8 +20,10 @@ const getAllMeals = async(req,res)=>{
     const tripId = req.params.tripId
     try {
         const meals = await prisma.meal.findMany({
-            where:{trip_id:tripId}
-
+            where:{trip_id:tripId},
+            include:{
+                _count:true
+            }
         })
         res.status(200).json({meals})
     } catch (error) {
