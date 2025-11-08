@@ -4,9 +4,9 @@ model Meal{
     meal_at String
     meal_status String
     meal_host String
-    guest_host Guest @relation(fields: [meal_host],references: [guest_id])
+    guest_host Guest @relation(fields: [meal_host],references: [guest_id],onDelete: Cascade)
     trip_id String
-    trip_table Trip @relation(fields: [trip_id],references: [trip_id])
+    trip_table Trip @relation(fields: [trip_id],references: [trip_id],onDelete: Cascade)
     menuList Menu[]
     mealShareList MenuShare[]
 }

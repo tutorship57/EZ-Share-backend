@@ -4,8 +4,8 @@ model MenuShare{
     amount Int
     status String
     meal_id String
-    meal_table Meal @relation(fields: [meal_id],references: [meal_id])
+    meal_table Meal @relation(fields: [meal_id],references: [meal_id],onDelete: Cascade)
     @@id([menu_id,guest_id])
-    menu_table Menu @relation(fields: [menu_id],references: [menu_id])
-    guest_table Guest @relation(fields: [guest_id],references: [guest_id])
+    menu_table Menu @relation(fields: [menu_id],references: [menu_id],onDelete: Cascade)
+    guest_table Guest @relation(fields: [guest_id],references: [guest_id],onDelete: Cascade)
 }

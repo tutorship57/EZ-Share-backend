@@ -2,7 +2,7 @@ model Guest{
     guest_id String @id @default(uuid())
     guest_name String
     user_id String 
-    owner_id User @relation(fields: [user_id],references: [user_id])
+    owner_id User @relation(fields: [user_id],references: [user_id],onDelete: Cascade)
     tripGuests TripGuest[]
     MenuShares MenuShare[]
     meals_hosted Meal[]

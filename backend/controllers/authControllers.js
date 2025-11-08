@@ -27,24 +27,12 @@ const login = async (req, res)=>{
         const accessToken = jwt.sign({ id: userExists.user_id }, process.env.JWT_ACCESS_SECRET, { expiresIn: "15m" });
         const refreshToken = jwt.sign({ id: userExists.user_id }, process.env.JWT_REFRESH_SECRET, { expiresIn: "7d" });
 
-        // res.cookie("refreshToken", refreshToken, {
-        //   httpOnly: true,
-        //   secure: true, // dev = false, prod = true // dev จะใช้ http / prod จะใช้ https ในการ secure เลย dev ให้เป็น false ไปก่อน 
-        //   sameSite: "None",
-        //   path:'/'
-        // });
+     
         res.cookie("refreshToken", refreshToken, {
           httpOnly: true,
         
         });
        
-        // res.cookie('username', 'JohnDoe', {
-        //   maxAge: 1000 * 60 * 60 * 24 * 7, // Cookie expires in 7 days (milliseconds)
-        //   httpOnly: true, // Prevents client-side JavaScript access
-        //   secure: true, // Only send over HTTPS
-        //   sameSite: 'Lax', // Controls when cookies are sent with cross-site requests
-        //   path:'/'
-        // });
        
         console.log("this is cookies after sign",res.cookie)
         res.status(200).json({ 
@@ -56,14 +44,7 @@ const login = async (req, res)=>{
             name: userExists.username, 
           }
         });
-        // generate JWT token
-        // const token = jwt.sign(
-        //   { id: userExists.user_id, email: userExists.email },
-        //   process.env.JWT_SECRET, // put secret in .env file
-        //   { expiresIn: "1h"
-        //    } // token expiration
-        // );
-  
+        
       } catch (err) {
         console.error(err);
         return res.status(500).json({ message: "Server error" });

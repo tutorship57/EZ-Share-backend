@@ -43,11 +43,25 @@ const getTripByUserID = async(req,res) =>{
     }
 }
 
+const deleteTrip = async(req,res) =>{
+    const {tripId} = req.params;
+    console.log(req.user.id);
+    try {
+        const trip = await prisma.trip.delete({
+            where:{trip_id:tripId,user_id:req.user.id},
+        })
+        return res.status(200).json({trip})
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({message:"something Went wrong !!"})
+    }
+}
 
 
 
 
 module.exports = {
     createTrip,
-    getTripByUserID
+    getTripByUserID,
+    deleteTrip
 }

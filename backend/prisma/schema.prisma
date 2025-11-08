@@ -1,18 +1,8 @@
-// generator client {
-//   provider = "prisma-client-js"
-//   output   = "../generated/prisma"
-// }
-
-// datasource db {
-//   provider = "postgresql"
-//   url      = env("DATABASE_URL")
-// }
-
 // model Guest{
 //     guest_id String @id @default(uuid())
 //     guest_name String
 //     user_id String 
-//     owner_id User @relation(fields: [user_id],references: [user_id])
+//     owner_id User @relation(fields: [user_id],references: [user_id],onDelete: Cascade)
 //     tripGuests TripGuest[]
 //     MenuShares MenuShare[]
 //     meals_hosted Meal[]
@@ -23,9 +13,9 @@
 //     meal_at String
 //     meal_status String
 //     meal_host String
-//     guest_host Guest @relation(fields: [meal_host],references: [guest_id])
+//     guest_host Guest @relation(fields: [meal_host],references: [guest_id],onDelete: Cascade)
 //     trip_id String
-//     trip_table Trip @relation(fields: [trip_id],references: [trip_id])
+//     trip_table Trip @relation(fields: [trip_id],references: [trip_id],onDelete: Cascade)
 //     menuList Menu[]
 //     mealShareList MenuShare[]
 // }
@@ -34,7 +24,7 @@
 //     menu_name String 
 //     amount Int
 //     meal_id String
-//     meal_table Meal @relation(fields: [meal_id],references: [meal_id])
+//     meal_table Meal @relation(fields: [meal_id],references: [meal_id],onDelete: Cascade)
 //     menuShares MenuShare[]
 // }
 // model MenuShare{
@@ -43,10 +33,10 @@
 //     amount Int
 //     status String
 //     meal_id String
-//     meal_table Meal @relation(fields: [meal_id],references: [meal_id])
+//     meal_table Meal @relation(fields: [meal_id],references: [meal_id],onDelete: Cascade)
 //     @@id([menu_id,guest_id])
-//     menu_table Menu @relation(fields: [menu_id],references: [menu_id])
-//     guest_table Guest @relation(fields: [guest_id],references: [guest_id])
+//     menu_table Menu @relation(fields: [menu_id],references: [menu_id],onDelete: Cascade)
+//     guest_table Guest @relation(fields: [guest_id],references: [guest_id],onDelete: Cascade)
 // }
 // model Trip{
 //     trip_id   String      @id @default(uuid())
@@ -55,17 +45,17 @@
 //     Description String
 //     Date DateTime @db.Date
 //     user_id  String
-//     createBy User @relation(fields: [user_id],references: [user_id])
+//     createBy User @relation(fields: [user_id],references: [user_id],onDelete: Cascade)
 //     meals    Meal[]
 //     tripGuests  TripGuest[]
 // }
 // model TripGuest{
 //     trip_id String
 //     guest_id String 
-//     total_spend Int
+//     total_spend Int 
 //     @@id([trip_id, guest_id])
-//     trip_table Trip @relation(fields: [trip_id],references: [trip_id])
-//     guest_table Guest @relation(fields: [guest_id],references: [guest_id])
+//     trip_table Trip @relation(fields: [trip_id],references: [trip_id],onDelete: Cascade)
+//     guest_table Guest @relation(fields: [guest_id],references: [guest_id],onDelete: Cascade)
 // }
 // model User {
 //   user_id        String      @id @default(uuid())
@@ -80,5 +70,14 @@
 //   guests         Guest[]
 // }
 
+// generator client {
+//   provider = "prisma-client-js"
+//   output   = "../generated/prisma"
+// }
+
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
 
 

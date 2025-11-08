@@ -3,6 +3,6 @@ model Menu{
     menu_name String 
     amount Int
     meal_id String
-    meal_table Meal @relation(fields: [meal_id],references: [meal_id])
+    meal_table Meal @relation(fields: [meal_id],references: [meal_id],onDelete: Cascade)
     menuShares MenuShare[]
 }
